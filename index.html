@@ -1,26 +1,281 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0e16">
+<meta name="description" content="FC Trading Assistant: analisi del margine, gestione del capitale e registro delle operazioni Ultimate Team.">
+<title>FC Trading Assistant</title>
+<style>
+:root{color-scheme:dark;--bg:#0a0e16;--surface:#111824;--surface2:#172131;--surface3:#202d40;--line:#2a374a;--text:#f4f7fb;--muted:#91a0b5;--lime:#c5ff48;--lime2:#9edb25;--cyan:#54d9e8;--gold:#f5ca70;--red:#ff777d;--radius:18px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+button,input,select{font:inherit}button,a,input,select{-webkit-tap-highlight-color:transparent}button,a{transition:transform .15s ease,border-color .15s ease,background .15s ease}button:active,a:active{transform:scale(.985)}
+a{color:inherit;text-decoration:none}button{cursor:pointer}
+.app{display:grid;grid-template-columns:226px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#0d131e;border-right:1px solid #202b3b;padding:24px 15px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:11px;padding:0 7px}.brand-mark{width:42px;height:42px;display:grid;place-items:center;background:var(--lime);color:#111a08;font-weight:1000;font-style:italic;letter-spacing:-2px;border-radius:13px;font-size:19px;box-shadow:0 0 28px #c5ff4822}.brand-name{font-size:14px;font-weight:900;letter-spacing:.2px}.brand-sub{font-size:9px;letter-spacing:1.8px;color:var(--muted);margin-top:4px}
+.nav-label{font-size:9px;font-weight:800;color:#64738a;letter-spacing:1.8px;padding:0 12px;margin-bottom:9px}.nav{display:grid;gap:5px}.nav a{display:flex;align-items:center;gap:11px;padding:12px;border-radius:11px;color:#a8b5c8;font-size:12px;font-weight:650}.nav a.active{background:#c5ff4817;color:var(--lime);border:1px solid #c5ff4824}.nav-icon{width:19px;text-align:center;font-size:16px}.side-bottom{margin-top:auto;border:1px solid var(--line);background:#111a27;border-radius:14px;padding:13px}.online-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--lime);margin-right:7px;box-shadow:0 0 9px #c5ff4888}.side-bottom strong{font-size:11px}.side-bottom p{font-size:10px;line-height:1.5;color:var(--muted);margin:8px 0 0}
+main{min-width:0;padding:25px clamp(15px,3vw,38px) 40px;max-width:1500px;width:100%;margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}.crumb{font-size:11px;color:var(--muted)}.crumb b{color:var(--text);font-weight:750}.top-actions{display:flex;gap:8px;align-items:center}.market-pill{border:1px solid var(--line);border-radius:99px;padding:9px 12px;font-size:10px;color:#c1ccdb;background:#111824;white-space:nowrap}.market-pill i{display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;margin-right:6px}
+.companion{display:inline-flex;align-items:center;gap:8px;padding:10px 13px;background:var(--lime);color:#111907;border-radius:10px;font-size:11px;font-weight:900;border:0;white-space:nowrap}.mobile-brand{display:none}
+.hero{position:relative;overflow:hidden;isolation:isolate;border:1px solid #35412c;border-radius:22px;padding:clamp(21px,3vw,34px);background:radial-gradient(ellipse at 90% 15%,#c5ff4825,transparent 35%),linear-gradient(112deg,#1a2632 0%,#111c28 55%,#15251b 100%);margin-bottom:17px}
+.hero:after{content:"FC";position:absolute;z-index:-1;right:3%;top:50%;transform:translateY(-50%) skew(-9deg);font-size:clamp(100px,20vw,230px);font-weight:1000;font-style:italic;letter-spacing:-.12em;color:#ffffff05;line-height:1}
+.kicker{display:flex;align-items:center;gap:8px;color:var(--lime);font-size:9px;font-weight:900;letter-spacing:2px;text-transform:uppercase}.kicker:before{content:"";width:18px;height:2px;background:var(--lime)}
+.hero h1{font-size:clamp(25px,3.5vw,39px);line-height:1.05;letter-spacing:-1.6px;margin:13px 0 10px;max-width:600px}.hero h1 span{color:var(--lime)}.hero p{font-size:12px;color:#aab8c9;line-height:1.7;max-width:560px;margin:0}.hero-bottom{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:22px}.hero-tags{display:flex;gap:7px;flex-wrap:wrap}.tag{border:1px solid #ffffff1b;background:#ffffff08;padding:7px 10px;border-radius:8px;color:#c0ccda;font-size:9px}.tag b{color:var(--lime);font-weight:850}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:24px 0 11px}.section-title{font-size:13px;font-weight:900;letter-spacing:.1px}.section-sub{font-size:10px;color:var(--muted);margin-top:4px}.section-chip{font-size:9px;color:var(--muted);border:1px solid var(--line);border-radius:7px;padding:6px 8px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.stat{border:1px solid var(--line);background:linear-gradient(145deg,#151e2b,#101722);border-radius:15px;padding:16px;min-width:0;position:relative;overflow:hidden}.stat:after{content:"";position:absolute;width:65px;height:65px;border:1px solid #ffffff08;border-radius:50%;right:-22px;top:-25px}.stat-top{display:flex;align-items:center;justify-content:space-between;gap:6px}.stat-label{font-size:10px;color:var(--muted)}.stat-icon{width:28px;height:28px;display:grid;place-items:center;background:#ffffff08;border-radius:8px;font-size:13px}.stat-value{font-size:clamp(20px,2.5vw,27px);font-weight:900;letter-spacing:-.7px;margin:14px 0 7px;overflow-wrap:anywhere}.stat-foot{font-size:9px;color:var(--muted);line-height:1.5}.stat-foot strong{color:var(--lime)}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:13px;margin-top:13px;align-items:start}.panel{border:1px solid var(--line);background:var(--surface);border-radius:17px;padding:18px;min-width:0}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px}.panel-title{font-size:13px;font-weight:900}.panel-desc{font-size:10px;color:var(--muted);line-height:1.55;margin-top:5px}.panel-icon{width:31px;height:31px;display:grid;place-items:center;background:#c5ff4812;border:1px solid #c5ff4820;border-radius:9px;color:var(--lime);flex-shrink:0}
+.field{margin:11px 0}.field label{display:block;color:#a4b2c5;font-size:10px;font-weight:700;margin-bottom:7px}.field input,.field select{width:100%;background:#0b111a;border:1px solid #2a3749;border-radius:10px;padding:12px;color:var(--text);font-size:13px;outline:none;min-width:0}.field input:focus,.field select:focus{border-color:var(--lime);box-shadow:0 0 0 3px #c5ff4810}.field input::placeholder{color:#526075}.fields-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.calc-result{border:1px solid #35472c;background:radial-gradient(ellipse at 100% 0%,#c5ff4810,transparent 60%),#0d1715;border-radius:13px;padding:15px;margin-top:14px}.calc-label{font-size:10px;color:#a9b8ad}.calc-value{font-size:27px;font-weight:950;letter-spacing:-.8px;margin:6px 0;color:var(--lime);overflow-wrap:anywhere}.calc-meta{font-size:10px;color:#91a69a;line-height:1.7}.calc-divider{height:1px;background:#26372d;margin:12px 0}.result-bottom{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.result-bottom span{font-size:10px;color:#a9b8ad}.result-bottom b{color:#f1f5f0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.btn{border:1px solid var(--line);background:#1a2635;color:#eaf0f7;border-radius:10px;padding:11px 13px;font-size:10px;font-weight:850}.btn.primary{background:var(--lime);color:#121908;border-color:var(--lime)}.btn.ghost{background:transparent;color:#aab7c8}.btn.danger{color:var(--red);border-color:#ff777d44;background:#ff777d0b}
+.signal-box{padding:14px;border:1px solid var(--line);border-radius:13px;background:#0c131d}.signal-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.signal-title{font-size:9px;letter-spacing:1.2px;color:var(--muted);font-weight:850}.signal-badge{border-radius:6px;padding:6px 8px;font-size:9px;font-weight:900;background:#c5ff4815;color:var(--lime)}.signal-badge.bad{background:#ff777d15;color:var(--red)}.signal-badge.warn{background:#f5ca7015;color:var(--gold)}.signal-box p{font-size:10px;color:#aab7c8;line-height:1.7;margin:11px 0 0}
+.rule-list{display:grid;gap:10px;margin-top:14px}.rule{display:flex;gap:10px;align-items:flex-start}.rule-icon{width:26px;height:26px;display:grid;place-items:center;flex-shrink:0;border-radius:8px;background:#ffffff08;color:var(--lime);font-size:12px}.rule strong{display:block;font-size:10px;margin:1px 0 4px}.rule p{font-size:9px;color:var(--muted);line-height:1.55;margin:0}
+.notice{border-left:2px solid var(--gold);background:#f5ca700c;padding:10px 12px;border-radius:0 8px 8px 0;color:#c9b98f;font-size:10px;line-height:1.65;margin-top:15px}
+.history-panel{margin-top:13px}.history-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.history-tools input{max-width:220px;background:#0b111a;border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--text);font-size:11px}.table-wrap{overflow:auto;border:1px solid #263346;border-radius:11px}table{width:100%;border-collapse:collapse;font-size:10px;min-width:700px}th{background:#151e2b;color:#8797ac;text-align:left;font-size:9px;letter-spacing:.3px;padding:12px 10px;white-space:nowrap}td{padding:10px;border-top:1px solid #202c3c;white-space:nowrap;color:#d9e2ed}tbody tr:hover{background:#ffffff03}.table-status{background:#0b111a;border:1px solid var(--line);border-radius:7px;padding:7px;color:#c8d3e0;font-size:10px}.empty{padding:25px 12px;text-align:center;color:var(--muted);font-size:11px}.empty-icon{font-size:23px;margin-bottom:8px}.footnote{font-size:9px;color:#6f7e92;text-align:center;margin:18px 0 0;line-height:1.6}
 
-<div class="notice" id="liveNotice" style="margin:0 0 14px">
-  <strong>Test connessione live:</strong>
-  verifichiamo se il browser riesce a leggere il catalogo pubblico di FUT.GG.
-  Nessun prezzo verrà inventato.
-</div>
+.watch-action{border:1px solid var(--line);background:#172131;color:#dce6f1;border-radius:7px;padding:6px 8px;font-size:9px;font-weight:800}
+.watch-action.remove{color:var(--red);background:#ff777d0b;border-color:#ff777d33}
+.mobile-nav{display:none}
+@media(max-width:900px){.app{grid-template-columns:72px minmax(0,1fr)}.sidebar{padding:22px 9px;align-items:center}.brand{padding:0}.brand-copy,.nav-label,.nav-text,.side-bottom{display:none}.nav{width:100%;margin-top:10px}.nav a{justify-content:center;padding:12px 5px}.nav-icon{font-size:17px}.content-grid{grid-template-columns:minmax(0,1fr)}.panel.secondary-panel{display:block}}
+@media(max-width:600px){.app{display:block}.sidebar{display:none}main{padding:15px 12px 28px}.topbar{margin-bottom:15px}.crumb{font-size:10px}.market-pill{display:none}.hero{border-radius:17px;padding:21px 18px}.hero h1{font-size:28px}.hero p{font-size:11px}.hero:after{right:0;font-size:125px}.hero-bottom{margin-top:17px}.hero-tags{gap:5px}.tag{font-size:8px;padding:6px 7px}.stats{gap:7px}.stat{padding:12px;border-radius:12px}.stat-label{font-size:9px}.stat-icon{width:24px;height:24px}.stat-value{font-size:20px;margin:12px 0 6px}.stat-foot{font-size:8px}.section-head{margin-top:19px}.content-grid{gap:10px}.panel{padding:14px;border-radius:14px}.fields-row{gap:8px}.field input,.field select{padding:11px 10px;font-size:13px}.calc-value{font-size:25px}.history-tools{width:100%}.history-tools input{max-width:none;flex:1;min-width:100px}.companion{font-size:10px;padding:10px}.mobile-nav{display:flex;position:sticky;bottom:8px;z-index:5;justify-content:space-around;gap:4px;margin:18px 0 0;padding:7px;background:#111a27ed;border:1px solid #2a374a;border-radius:15px;backdrop-filter:blur(14px)}.mobile-nav a{display:grid;justify-items:center;gap:4px;color:#93a2b7;font-size:8px;padding:5px 8px}.mobile-nav a span:first-child{font-size:15px}.mobile-nav a.active{color:var(--lime)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <a class="brand" href="#dashboard" aria-label="FC Trading Assistant home"><div class="brand-mark">FC</div><div class="brand-copy"><div class="brand-name">TRADING HUB</div><div class="brand-sub">ULTIMATE TEAM</div></div></a>
+  <div><div class="nav-label">WORKSPACE</div><nav class="nav" aria-label="Navigazione principale">
+    <a class="active" href="#dashboard"><span class="nav-icon">◈</span><span class="nav-text">Dashboard</span></a>
+    <a href="#market"><span class="nav-icon">⌁</span><span class="nav-text">Mercato PC</span></a>
+    <a href="#scanner"><span class="nav-icon">⌕</span><span class="nav-text">Analizza giocatore</span></a>
+    <a href="#history"><span class="nav-icon">▤</span><span class="nav-text">Storico trading</span></a>
+    <a href="#settings"><span class="nav-icon">⚙</span><span class="nav-text">Impostazioni</span></a>
+  </nav></div>
+  <div class="side-bottom"><strong><span class="online-dot"></span>Modalità manuale</strong><p>I prezzi sono inseriti da te. Nessuna quotazione viene simulata o inventata.</p></div>
+</aside>
+<main id="dashboard">
+  <div class="topbar"><div class="crumb">WORKSPACE / <b>Trading dashboard</b></div><div class="top-actions"><span class="market-pill"><i></i>DATI INSERITI MANUALMENTE</span><a class="companion" href="https://www.ea.com/ea-sports-fc/ultimate-team/web-app" target="_blank" rel="noopener noreferrer">↗ APRI COMPANION</a></div></div>
+  <section class="hero">
+    <div class="kicker">FC ULTIMATE TEAM · TRADING TOOLS</div>
+    <h1>Compra con criterio.<br><span>Vendi con margine.</span></h1>
+    <p>Valuta un prezzo prima di investire, calcola la tassa di mercato e tieni sotto controllo il capitale. Le opportunità sono stime: la rivendibilità va verificata sul mercato reale.</p>
+    <div class="hero-bottom"><div class="hero-tags"><span class="tag"><b>01</b> Margine netto</span><span class="tag"><b>02</b> Gestione capitale</span><span class="tag"><b>03</b> Storico operazioni</span></div><a class="btn primary" href="#scanner">ANALIZZA UN GIOCATORE ↘</a></div>
+  </section>
 
-<div class="actions" style="margin:0 0 12px">
-  <button id="testLive" class="btn primary" type="button">
-    TESTA CONNESSIONE LIVE
-  </button>
-  <a class="btn ghost"
-     href="https://www.fut.gg/players/"
-     target="_blank" rel="noopener noreferrer">
-    APRI FUT.GG ↗
-  </a>
-</div>
 
-<div id="liveTestResult" class="signal-box"
-     role="status" aria-live="polite">
-  <div class="signal-top">
-    <span class="signal-title">STATO CONNESSIONE</span>
-    <span class="signal-badge warn">NON TESTATA</span>
+  <section class="panel" id="market" style="margin:0 0 18px">
+    <div class="panel-head">
+      <div><div class="panel-title">MERCATO PC · OPPORTUNITÀ</div><div class="panel-desc">Cerca una carta oppure aggiungi una quotazione osservata. I dati inseriti a mano sono sempre etichettati come manuali.</div></div>
+      <div class="panel-icon">⌁</div>
+    </div>
+    <div class="notice" style="margin:0 0 14px"><strong>Connessione live non attiva:</strong> questa versione non legge automaticamente le aste della Companion. Puoi aprire una fonte gratuita in una nuova scheda e riportare qui i prezzi verificati. Nessun prezzo di esempio viene mostrato come se fosse live.</div>
+    <div class="fields-row">
+      <div class="field"><label for="marketSearch">RICERCA GIOCATORE / CARTA</label><input id="marketSearch" type="search" maxlength="100" placeholder="Es. Mbappé, centrocampista, Serie A"></div>
+      <div class="field"><label for="marketSort">ORDINA RISULTATI</label><select id="marketSort"><option value="profit">Margine netto più alto</option><option value="name">Nome A–Z</option><option value="buy">Prezzo d'acquisto più basso</option></select></div>
+    </div>
+    <div class="fields-row">
+      <div class="field"><label for="marketBuy">PREZZO D'ACQUISTO / MINIMO OSSERVATO</label><input id="marketBuy" type="number" inputmode="numeric" min="0" step="1" placeholder="Prezzo visto nel mercato PC"></div>
+      <div class="field"><label for="marketSell">PREZZO DI RIVENDITA PRUDENTE</label><input id="marketSell" type="number" inputmode="numeric" min="0" step="1" placeholder="Prezzo a cui pensi di rivendere"></div>
+    </div>
+    <div class="fields-row">
+      <div class="field"><label for="marketPlayer">NOME CARTA</label><input id="marketPlayer" maxlength="100" placeholder="Nome del giocatore / versione"></div>
+      <div class="field"><label for="marketMinProfit">PROFITTO NETTO MINIMO</label><input id="marketMinProfit" type="number" min="0" step="1" value="100" inputmode="numeric"></div>
+    </div>
+    <div class="calc-result" aria-live="polite">
+      <div class="calc-label">MARGINE NETTO STIMATO · DOPO TASSA EA DEL 5%</div>
+      <div class="calc-value" id="marketNet">—</div>
+      <div class="calc-meta" id="marketMeta">Inserisci prezzo d'acquisto e rivendita per calcolare il netto.</div>
+      <div class="calc-divider"></div>
+      <div class="result-bottom"><span>Tassa stimata <b id="marketFee">—</b></span><span>Margine sul costo <b id="marketMargin">—</b></span></div>
+    </div>
+    <div class="actions">
+      <button id="marketAnalyze" class="btn primary" type="button">CALCOLA MARGINE</button>
+      <button id="marketAdd" class="btn" type="button">＋ AGGIUNGI AL WATCHLIST</button>
+      <a class="btn ghost" href="https://www.fut.gg/" target="_blank" rel="noopener noreferrer">APRI FUT.GG ↗</a>
+      <a class="btn ghost" href="https://www.futbin.com/" target="_blank" rel="noopener noreferrer">APRI FUTBIN ↗</a>
+    </div>
+    <div class="section-head"><div><div class="section-title">WATCHLIST · MERCATO GENERALE</div><div class="section-sub">Le carte che aggiungi tu, con margine netto stimato e stato della quotazione.</div></div><span class="section-chip" id="watchCount">0 CARTE</span></div>
+    <div class="table-wrap"><table style="min-width:650px"><thead><tr><th>GIOCATORE / CARTA</th><th>ACQUISTO</th><th>RIVENDITA</th><th>TASSA 5%</th><th>NETTO / CARTA</th><th>STATO</th><th></th></tr></thead><tbody id="watchRows"></tbody></table><div class="empty" id="watchEmpty"><div class="empty-icon">⌕</div>Nessuna carta monitorata.<br>Cerca un giocatore, inserisci i prezzi osservati e aggiungilo alla watchlist.</div></div>
+    <p class="footnote" style="text-align:left">I link aprono siti esterni: la ricerca e il controllo dei prezzi avvengono lì. Non inserire credenziali EA in siti non autorizzati. La watchlist non compra né vende carte.</p>
+  </section>
+
+  <div class="section-head"><div><div class="section-title">PANORAMICA DEL CAPITALE</div><div class="section-sub">Riepilogo delle operazioni che hai registrato</div></div><span class="section-chip">LIVE · LOCALE</span></div>
+  <section class="stats" aria-label="Statistiche del capitale">
+    <div class="stat"><div class="stat-top"><span class="stat-label">Crediti disponibili stimati</span><span class="stat-icon">◉</span></div><div class="stat-value" id="availableCapital">37.338</div><div class="stat-foot">Dopo acquisti registrati e incassi <strong>confermati</strong></div></div>
+    <div class="stat"><div class="stat-top"><span class="stat-label">Profitto realizzato</span><span class="stat-icon">↗</span></div><div class="stat-value" id="realizedProfit">0</div><div class="stat-foot">Solo carte segnate come <strong>vendute</strong></div></div>
+    <div class="stat"><div class="stat-top"><span class="stat-label">Carte da monitorare</span><span class="stat-icon">▦</span></div><div class="stat-value" id="heldCards">0</div><div class="stat-foot">Carte non ancora segnate come vendute</div></div>
+  </section>
+
+  <div class="content-grid">
+    <section class="panel" id="scanner">
+      <div class="panel-head"><div><div class="panel-title">SCANNER DI PROFITTABILITÀ</div><div class="panel-desc">Inserisci i prezzi che vedi nella Companion e controlla il margine stimato.</div></div><div class="panel-icon">⌕</div></div>
+      <div class="field"><label for="playerName">NOME GIOCATORE</label><input id="playerName" maxlength="100" autocomplete="off" placeholder="Es. Rui Silva"></div>
+      <div class="fields-row">
+        <div class="field"><label for="buyPrice">PREZZO D'ACQUISTO</label><input id="buyPrice" type="number" inputmode="numeric" min="0" step="1" value="600"></div>
+        <div class="field"><label for="sellPrice">RIVENDITA PREVISTA</label><input id="sellPrice" type="number" inputmode="numeric" min="0" step="1" value="750"></div>
+      </div>
+      <div class="fields-row">
+        <div class="field"><label for="quantity">QUANTITÀ</label><input id="quantity" type="number" inputmode="numeric" min="1" max="1000" step="1" value="1"></div>
+        <div class="field"><label for="taxRate">TASSA DI MERCATO (%)</label><input id="taxRate" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="5"></div>
+      </div>
+      <div class="calc-result" aria-live="polite">
+        <div class="calc-label">PROFITTO NETTO STIMATO · PER CARTA</div><div class="calc-value" id="netPerCard">113 crediti</div><div class="calc-meta" id="marginText">Margine sul costo: 18,8%</div>
+        <div class="calc-divider"></div><div class="result-bottom"><span>Profitto totale <b id="totalNetText">113 crediti</b></span><span>Tassa stimata <b id="feeText">37 crediti</b></span></div>
+      </div>
+      <div class="actions"><button id="registerBuy" class="btn primary">＋ REGISTRA ACQUISTO</button><button id="resetForm" class="btn ghost" type="button">RESET</button></div>
+      <p class="small">Registra solo acquisti realmente effettuati. Il profitto stimato non garantisce che la carta venga venduta al prezzo previsto.</p>
+    </section>
+
+    <section class="panel secondary-panel" id="settings">
+      <div class="panel-head"><div><div class="panel-title">IL TUO PIANO</div><div class="panel-desc">Imposta il capitale e il margine minimo che vuoi ottenere.</div></div><div class="panel-icon">⚙</div></div>
+      <div class="field"><label for="startingCapital">CAPITALE INIZIALE</label><input id="startingCapital" type="number" inputmode="numeric" min="0" step="1" value="37338"></div>
+      <div class="field"><label for="minimumProfit">PROFITTO MINIMO PER CARTA</label><input id="minimumProfit" type="number" inputmode="numeric" min="0" step="1" value="100"></div>
+      <div class="signal-box" aria-live="polite"><div class="signal-top"><span class="signal-title">ESITO DEL CALCOLO</span><span class="signal-badge" id="signalText">POTENZIALE PROFITTO</span></div><p id="signalDetail">Il margine supera la soglia. Verifica quantità di annunci e domanda.</p></div>
+      <div class="rule-list">
+        <div class="rule"><div class="rule-icon">✓</div><div><strong>Controlla il prezzo minimo</strong><p>Guarda gli annunci attivi e non basarti su una sola carta in vendita.</p></div></div>
+        <div class="rule"><div class="rule-icon">◷</div><div><strong>Verifica la domanda</strong><p>Il prezzo d'annuncio non prova che la carta si venda velocemente.</p></div></div>
+        <div class="rule"><div class="rule-icon">⌁</div><div><strong>Proteggi il capitale</strong><p>Evita di investire tutto in una sola carta o in un solo giocatore.</p></div></div>
+      </div>
+      <div class="notice"><strong>Nota sui dati:</strong> lo scanner non è ancora collegato ai prezzi live. Inserisci quotazioni osservate nella Companion; questa app non inventa dati né compra/vende automaticamente.</div>
+      <div class="actions"><button id="saveSettings" class="btn">SALVA IMPOSTAZIONI</button><button id="exportCsv" class="btn ghost">ESPORTA CSV ↓</button></div>
+    </section>
   </div>
-  <p>Premi il pulsante per verificare la connessione.</p>
+
+  <section class="panel history-panel" id="history">
+    <div class="panel-head"><div><div class="panel-title">REGISTRO DEL TRADING</div><div class="panel-desc">Segui le carte acquistate e aggiorna lo stato quando completi la vendita.</div></div><span class="section-chip" id="operationCount">0 OPERAZIONI</span></div>
+    <div class="history-tools" style="margin-bottom:12px"><input id="historySearch" type="search" placeholder="Cerca un giocatore…" aria-label="Cerca nello storico"><button id="clearHistory" class="btn danger">SVUOTA STORICO</button></div>
+    <div class="table-wrap"><table><thead><tr><th>GIOCATORE</th><th>QTÀ</th><th>ACQUISTO</th><th>RIVENDITA PREVISTA</th><th>NETTO/CARTA</th><th>STATO</th><th></th></tr></thead><tbody id="tradeRows"></tbody></table><div class="empty" id="emptyState"><div class="empty-icon">▤</div>Nessuna operazione ancora.<br>La prima operazione registrata apparirà qui.</div></div>
+  </section>
+  <nav class="mobile-nav" aria-label="Navigazione rapida"><a class="active" href="#dashboard"><span>◈</span><span>Home</span></a><a href="#market"><span>⌁</span><span>Mercato</span></a><a href="#scanner"><span>⌕</span><span>Scanner</span></a><a href="#history"><span>▤</span><span>Storico</span></a><a href="#settings"><span>⚙</span><span>Piano</span></a></nav>
+  <div class="footnote">FC Trading Assistant · Strumento indipendente, non affiliato a EA.<br>I prezzi e i segnali non sono consigli garantiti né quotazioni live.</div>
+</main>
 </div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const TRADES_KEY='fcta_trades_v3',SETTINGS_KEY='fcta_settings_v3';
+const num=(id,def=0)=>{const n=Number($(id).value);return Number.isFinite(n)?n:def};
+const intClamp=(n,min,max)=>Math.min(max,Math.max(min,Math.floor(n)));
+const fmt=n=>Math.round(n).toLocaleString('it-IT');
+const credits=n=>fmt(n)+' crediti';
+function read(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return v==null?fallback:v}catch(_){return fallback}}
+function write(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){alert('Il browser non ha potuto salvare i dati. Esporta lo storico per conservarlo.');return false}}
+
+const WATCH_KEY='fcta_watchlist_pc_v1';
+let watchlist=read(WATCH_KEY,[]);
+if(!Array.isArray(watchlist))watchlist=[];
+watchlist=watchlist.filter(w=>w&&typeof w.name==='string'&&Number.isFinite(Number(w.buy))&&Number.isFinite(Number(w.sell)));
+function watchProfit(w){return Math.floor(Number(w.sell)*0.95)-Number(w.buy)}
+function marketCalc(){
+ const buy=Math.max(0,Math.floor(Number($('marketBuy').value)||0));
+ const sell=Math.max(0,Math.floor(Number($('marketSell').value)||0));
+ const fee=Math.floor(sell*.05),profit=sell-fee-buy,margin=buy>0?profit/buy*100:0;
+ const ready=buy>0&&sell>0;
+ $('marketNet').textContent=ready?credits(profit):'—';
+ $('marketNet').style.color=ready?(profit>0?'var(--lime)':'var(--red)'):'var(--text)';
+ $('marketFee').textContent=ready?credits(fee):'—';
+ $('marketMargin').textContent=ready&&buy>0?margin.toLocaleString('it-IT',{maximumFractionDigits:1})+'%':'—';
+ $('marketMeta').textContent=ready
+   ? (profit>0?'Dopo la tassa del 5% resterebbero circa '+credits(profit)+' per carta.':'Con questi valori non risulta un profitto netto positivo.')+' Stima basata sui prezzi inseriti da te.'
+   : 'Inserisci prezzo d’acquisto e rivendita per calcolare il netto.';
+ return {buy,sell,fee,profit,margin,ready};
+}
+function renderWatchlist(){
+ const q=$('marketSearch').value.trim().toLocaleLowerCase('it');
+ const sort=$('marketSort').value;
+ let items=watchlist.map((w,i)=>({...w,_i:i})).filter(w=>w.name.toLocaleLowerCase('it').includes(q));
+ if(sort==='profit')items.sort((a,b)=>watchProfit(b)-watchProfit(a));
+ else if(sort==='buy')items.sort((a,b)=>a.buy-b.buy);
+ else items.sort((a,b)=>a.name.localeCompare(b.name,'it'));
+ $('watchRows').innerHTML=items.map(w=>{
+  const p=watchProfit(w),fee=Math.floor(w.sell*.05);
+  const state=p<=0?'NON CONVIENE':p<Number($('marketMinProfit').value||100)?'MARGINE BASSO':'DA VERIFICARE';
+  const color=p>0?'var(--lime)':'var(--red)';
+  return '<tr><td><strong>'+escapeHtml(w.name)+'</strong><div style="font-size:9px;color:var(--muted);margin-top:4px">Prezzi inseriti manualmente · PC</div></td><td>'+fmt(w.buy)+'</td><td>'+fmt(w.sell)+'</td><td>'+fmt(fee)+'</td><td style="color:'+color+';font-weight:900">'+(p>0?'+':'')+fmt(p)+'</td><td>'+state+'</td><td><button type="button" class="watch-action remove" data-watch-delete="'+w._i+'">Rimuovi</button></td></tr>';
+ }).join('');
+ $('watchEmpty').style.display=items.length?'none':'block';
+ $('watchCount').textContent=watchlist.length+' '+(watchlist.length===1?'CARTA':'CARTE');
+ try{localStorage.setItem(WATCH_KEY,JSON.stringify(watchlist))}catch(_){}
+}
+$('marketAnalyze').addEventListener('click',marketCalc);
+['marketBuy','marketSell','marketMinProfit'].forEach(id=>$(id).addEventListener('input',()=>{marketCalc();renderWatchlist()}));
+$('marketSearch').addEventListener('input',renderWatchlist);
+$('marketSort').addEventListener('change',renderWatchlist);
+$('marketAdd').addEventListener('click',()=>{
+ const c=marketCalc(),name=$('marketPlayer').value.trim()||$('marketSearch').value.trim();
+ if(!name){alert('Inserisci il nome della carta.');$('marketPlayer').focus();return}
+ if(!c.ready){alert('Inserisci un prezzo d’acquisto e un prezzo di rivendita maggiori di zero.');return}
+ watchlist.unshift({name,buy:c.buy,sell:c.sell,platform:'PC',source:'manuale',createdAt:new Date().toISOString()});
+ $('marketPlayer').value='';renderWatchlist();
+});
+$('watchRows').addEventListener('click',e=>{
+ const raw=e.target.getAttribute('data-watch-delete');if(raw===null)return;
+ const i=Number(raw);if(Number.isInteger(i)&&watchlist[i]){watchlist.splice(i,1);renderWatchlist()}
+});
+
+let trades=read(TRADES_KEY,[]);if(!Array.isArray(trades))trades=[];
+trades=trades.filter(t=>t&&typeof t.player==='string'&&Number.isFinite(Number(t.buy))&&Number.isFinite(Number(t.sell))&&Number.isFinite(Number(t.qty))&&Number(t.qty)>0).map(t=>({...t,qty:intClamp(Number(t.qty),1,1000),buy:Math.max(0,Number(t.buy)),sell:Math.max(0,Number(t.sell)),taxRate:Math.min(1,Math.max(0,Number(t.taxRate)||0)),status:['Da monitorare','Venduto','Invenduto'].includes(t.status)?t.status:'Da monitorare'}));
+let settings=read(SETTINGS_KEY,{});
+if(Number.isFinite(Number(settings.startingCapital))) $('startingCapital').value=Math.max(0,Number(settings.startingCapital));
+if(Number.isFinite(Number(settings.minimumProfit))) $('minimumProfit').value=Math.max(0,Number(settings.minimumProfit));
+function perCard(t){const fee=Math.floor(t.sell*t.taxRate);return (t.sell-fee)-t.buy}
+function tradeTotals(t){const cost=t.buy*t.qty,fee=Math.floor(t.sell*t.taxRate),proceeds=(t.sell-fee)*t.qty;return {cost,proceeds,profit:proceeds-cost}}
+function calc(){
+ const buy=Math.max(0,Math.floor(num('buyPrice'))),sell=Math.max(0,Math.floor(num('sellPrice'))),qty=intClamp(num('quantity',1)||1,1,1000),rate=Math.min(100,Math.max(0,num('taxRate',5)))/100,fee=Math.floor(sell*rate),profit=sell-fee-buy,margin=buy>0?profit/buy*100:0;
+ $('netPerCard').textContent=credits(profit);$('netPerCard').style.color=profit>0?'var(--lime)':'var(--red)';
+ $('marginText').textContent='Margine sul costo: '+margin.toLocaleString('it-IT',{maximumFractionDigits:1})+'%';
+ $('totalNetText').textContent=credits(profit*qty);$('feeText').textContent=credits(fee);
+ const min=Math.max(0,num('minimumProfit'));let label,detail,cls;
+ if(profit<=0){label='EVITA';detail='Con questi prezzi non risulta un profitto netto positivo.';cls='bad'}
+ else if(profit<min){label='MARGINE BASSO';detail='Il margine è positivo ma inferiore alla soglia impostata.';cls='warn'}
+ else{label='POTENZIALE PROFITTO';detail='Il margine supera la soglia. Verifica prezzo minimo, annunci e domanda.';cls=''}
+ $('signalText').textContent=label;$('signalText').className='signal-badge '+cls;$('signalDetail').textContent=detail;
+ return {buy,sell,qty,rate,fee,profit};
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function availableCapital(){
+ const start=Math.max(0,num('startingCapital'));
+ return trades.reduce((cash,t)=>{const x=tradeTotals(t);cash-=x.cost;if(t.status==='Venduto')cash+=x.proceeds;return cash},start);
+}
+function render(){
+ const start=Math.max(0,num('startingCapital'));let cash=start,realized=0,held=0;
+ trades.forEach(t=>{const x=tradeTotals(t);cash-=x.cost;if(t.status==='Venduto'){cash+=x.proceeds;realized+=x.profit}else if(t.status==='Da monitorare')held+=t.qty});
+ $('availableCapital').textContent=credits(cash);$('realizedProfit').textContent=(realized>0?'+':'')+credits(realized);$('realizedProfit').style.color=realized>=0?'var(--lime)':'var(--red)';$('heldCards').textContent=fmt(held);$('operationCount').textContent=trades.length+' '+(trades.length===1?'OPERAZIONE':'OPERAZIONI');
+ const query=$('historySearch').value.trim().toLocaleLowerCase('it');
+ const filtered=trades.map((t,i)=>({...t,_i:i})).filter(t=>t.player.toLocaleLowerCase('it').includes(query));
+ $('tradeRows').innerHTML=filtered.map(t=>{
+   const p=perCard(t),options=['Da monitorare','Venduto','Invenduto'].map(s=>'<option value="'+s+'"'+(t.status===s?' selected':'')+'>'+s+'</option>').join('');
+   return '<tr><td><strong>'+escapeHtml(t.player)+'</strong></td><td>'+fmt(t.qty)+'</td><td>'+fmt(t.buy)+'</td><td>'+fmt(t.sell)+'</td><td style="color:'+(p>0?'var(--lime)':'var(--red)')+'">'+fmt(p)+'</td><td><select class="table-status" data-status="'+t._i+'" aria-label="Stato di '+escapeHtml(t.player)+'">'+options+'</select></td><td><button type="button" class="btn ghost" data-delete="'+t._i+'" aria-label="Elimina '+escapeHtml(t.player)+'">×</button></td></tr>';
+ }).join('');
+ $('emptyState').style.display=filtered.length?'none':'block';
+ write(TRADES_KEY,trades);
+}
+['buyPrice','sellPrice','quantity','taxRate','minimumProfit'].forEach(id=>$(id).addEventListener('input',calc));
+$('registerBuy').addEventListener('click',()=>{
+ const c=calc(),player=$('playerName').value.trim();
+ if(!player){alert('Inserisci il nome del giocatore.');$('playerName').focus();return}
+ if(c.buy<=0||c.sell<=0){alert('Inserisci prezzi di acquisto e vendita maggiori di zero.');return}
+ const cost=c.buy*c.qty,cash=availableCapital();
+ if(cost>cash){alert('Capitale insufficiente. Disponibile stimato: '+credits(cash));return}
+ trades.unshift({player,buy:c.buy,sell:c.sell,qty:c.qty,taxRate:c.rate,status:'Da monitorare',createdAt:new Date().toISOString()});
+ render();alert('Acquisto registrato. Cambia lo stato in “Venduto” solo dopo aver venduto davvero la carta.');
+});
+$('tradeRows').addEventListener('change',e=>{const i=e.target.getAttribute('data-status');if(i===null)return;const index=Number(i);if(!Number.isInteger(index)||!trades[index])return;trades[index].status=e.target.value;render()});
+$('tradeRows').addEventListener('click',e=>{const raw=e.target.getAttribute('data-delete');if(raw===null)return;const i=Number(raw);if(!Number.isInteger(i)||!trades[i])return;if(confirm('Eliminare questa operazione?')){trades.splice(i,1);render()}});
+$('historySearch').addEventListener('input',render);
+$('saveSettings').addEventListener('click',()=>{settings={startingCapital:Math.max(0,num('startingCapital')),minimumProfit:Math.max(0,num('minimumProfit'))};write(SETTINGS_KEY,settings);calc();render();alert('Impostazioni salvate su questo browser.')});
+$('resetForm').addEventListener('click',()=>{$('playerName').value='';$('buyPrice').value='';$('sellPrice').value='';$('quantity').value='1';calc()});
+$('clearHistory').addEventListener('click',()=>{if(confirm('Vuoi cancellare tutto lo storico? Questa azione non si può annullare.')){trades=[];render()}});
+$('exportCsv').addEventListener('click',()=>{
+ const rows=[['Giocatore','Quantità','Acquisto unitario','Vendita prevista','Tassa percentuale','Profitto netto stimato per carta','Stato','Data'],...trades.map(t=>[t.player,t.qty,t.buy,t.sell,String(t.taxRate*100).replace('.',','),perCard(t),t.status,t.createdAt||''])];
+ const csv=rows.map(row=>row.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ const url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='fc-trading-storico.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+document.querySelectorAll('.nav a,.mobile-nav a').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('.nav a,.mobile-nav a').forEach(x=>x.classList.remove('active'));document.querySelectorAll('a[href="'+a.getAttribute('href')+'"]').forEach(x=>x.classList.add('active'))}));
+calc();render();marketCalc();renderWatchlist();
+})();
+</script>
+</body>
+</html>
